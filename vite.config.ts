@@ -29,6 +29,13 @@ export default defineConfig(async () => ({
   clearScreen: false,
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
+    proxy: {
+      '/pdf/images': {
+        target: 'https://report-platforms.oss-cn-beijing.aliyuncs.com',
+        changeOrigin: true,
+        rewrite: (url) => url.replace(/^\/pdf\/images/, '/pdf/images'), // 注意这里的rewrite可能需要根据实际情况调整
+      }
+    },
     port: 1420,
     strictPort: true,
     host: host || false,

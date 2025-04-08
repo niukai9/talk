@@ -12,9 +12,9 @@
   "app": {
     "windows": [
       {
-        "title": "talk",
-        "width": 800,
-        "height": 600
+        "title": "Talk 0407",
+        "fullscreen": false,
+        "maximized": true
       }
     ],
     "security": {

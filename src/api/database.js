@@ -19,6 +19,7 @@ export async function initializeDatabase() {
     if (!db) {
       resDir = await resourceDir();
       dbPath = `sqlite:${resDir}/talkdb.db`;
+      dbPath = 'sqlite:D:/talkdb.db';
       db = await Database.load(dbPath);
       console.log("Database loaded successfully.");
     }
@@ -120,13 +121,28 @@ export async function getCheckByPhone() {
 }
 
 
+export async function getTalksJson() {
+  try {
+    if (!db) {
+      db = await Database.load(dbPath);
+    }
+    // console.log("dbpath{}",dbPath)
+      // const result = await db.select(`SELECT file_name,talk_id, SUBSTR(dialog_json, 1, 100) AS front_txt, dialog_json, dialog_check, LENGTH(dialog_json) AS txtlen FROM talks where status in (0,1) order by txtlen`);
+      const result = await db.select(`SELECT file_name,talk_id, SUBSTR(dialog_json, 1, 100) AS front_txt, dialog_json, dialog_check, LENGTH(dialog_json) AS txtlen FROM talks where status in (0,1) order by txtlen`);
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch getTalks:", error);
+      throw error;
+    }
+}
+
 export async function getTalks() {
   try {
     if (!db) {
       db = await Database.load(dbPath);
     }
     // console.log("dbpath{}",dbPath)
-      const result = await db.select(`SELECT file_name,line,talk_id, SUBSTR(txt, 1, 100) AS front_txt, txt, split_txt, LENGTH(txt) AS txtlen FROM talk where status in (0,1) order by txtlen`);
+      const result = await db.select(`SELECT file_name,line,talk_id, SUBSTR(txt, 1, 100) AS front_txt, txt, split_txt, LENGTH(txt) AS txtlen FROM talk where status in (0,1,2) order by txtlen`);
       return result;
     } catch (error) {
       console.error("Failed to fetch getTalks:", error);
@@ -212,6 +228,32 @@ export async function updateSplitTxt(id,split_txt,status) {
       db = await Database.load(dbPath);
     }
       const result = await db.execute("UPDATE talk SET split_txt = ?1,status=?2  WHERE talk_id = ?3",[split_txt, status, id]);
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch updateSplitTxt:", error);
+      throw error;
+    }
+}
+
+export async function updateDialog(id,dialog_check,status) {
+  try {
+    if (!db) {
+      db = await Database.load(dbPath);
+    }
+      const result = await db.execute("UPDATE talks SET dialog_check = ?1,status=?2  WHERE talk_id = ?3",[dialog_check, status, id]);
+      return result;
+    } catch (error) {
+      console.error("Failed to fetch updateSplitTxt:", error);
+      throw error;
+    }
+}
+
+export async function updateSpk(id,spkOld,spkNew) {
+  try {
+    if (!db) {
+      db = await Database.load(dbPath);
+    }
+      const result = await db.execute("UPDATE talks SET dialog_json = REPLACE(dialog_json, ?1, ?2),dialog_check = REPLACE(dialog_check, ?1, ?2) WHERE talk_id = ?3",[spkOld, spkNew, id]);
       return result;
     } catch (error) {
       console.error("Failed to fetch updateSplitTxt:", error);

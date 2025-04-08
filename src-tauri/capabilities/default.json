@@ -11,6 +11,20 @@
     "sql:allow-load",
     "sql:default",
     "sql:allow-execute",
-    "websocket:default"
-  ]
+    "websocket:default",
+    "http:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        {
+          "url": "https://**/"
+        },
+        {
+          "url": "http://**/"
+        }
+      ]
+    },
+    "core:window:allow-close",
+    "core:window:allow-minimize"
+    ]
 }
